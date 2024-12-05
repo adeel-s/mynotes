@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -36,7 +38,7 @@ class _LoginViewState extends State<LoginView> {
     const appBarColor = Colors.deepPurple;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: const Text('Login'),
         backgroundColor: appBarColor,
       ),
       body: Column(
@@ -65,21 +67,21 @@ class _LoginViewState extends State<LoginView> {
                     try {
                     final userCredential = 
                                 await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
-                    print(userCredential);
+                    log(userCredential.toString());
                     }
                     on FirebaseAuthException catch (e) {
                       
                       if (e.code == 'invalid-credential') {
-                        print ('User not found'); //add alert widget on view later
+                        log('User not found'); //add alert widget on view later
                       }
                       else {
-                        print(e.code);
+                        log(e.code);
                       }
                     }
                     catch (e) {
-                      print('Something bad happened');
-                      print(e.runtimeType);
-                      print(e);
+                      log('Something bad happened');
+                      log(e.runtimeType.toString());
+                      log(e.toString());
                     }
                 }, child: const Text('Login'),
                 ),

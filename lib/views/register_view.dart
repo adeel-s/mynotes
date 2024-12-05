@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -65,14 +67,16 @@ class _RegisterViewState extends State<RegisterView> {
                     try {
                     final userCredential = 
                                 await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
-                    print(userCredential);
+                    log(userCredential.toString());
                     } on FirebaseAuthException catch (e) {
-                      if (e.code == 'weak-password')
-                        print(e.code);
-                      else if (e.code == 'email-already-in-use')
-                        print('email already in use');
-                      else if (e.code == 'invalid-email')
-                        print('Invalid email')  ;
+                      if (e.code == 'weak-password') {
+                        log(e.code);
+                      } else if (e.code == 'email-already-in-use'){
+                        log('email already in use');
+                      }
+                      else if (e.code == 'invalid-email'){
+                        log('Invalid email')  ;
+                      }
                     }
                 }, child: const Text('Register'),
                 ),
