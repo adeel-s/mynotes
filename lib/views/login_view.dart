@@ -3,6 +3,7 @@ import 'package:mynotes/constants/routes.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mynotes/utilities/show_error_dialog.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -79,15 +80,22 @@ class _LoginViewState extends State<LoginView> {
                       
                       if (e.code == 'invalid-credential') {
                         log('User not found'); //add alert widget on view later
+                        await showErrorDialog(context, 'User not found',);
+                      }
+                      else if (e.code == 'invalid-email') {
+                        log(e.code);
+                        await showErrorDialog(context, 'Invalid email format',);
                       }
                       else {
                         log(e.code);
+                        await showErrorDialog(context, 'Error: ${e.code}',);
                       }
                     }
                     catch (e) {
                       log('Something bad happened');
                       log(e.runtimeType.toString());
                       log(e.toString());
+                      await showErrorDialog(context, 'Error: ${e.toString()}',);
                     }
                 }, child: const Text('Login'),
                 ),
@@ -105,3 +113,4 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 }
+
