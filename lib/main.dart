@@ -43,7 +43,7 @@ class HomePage extends StatelessWidget {
                 print('user email needs to be verified');
               return const Text('Done');
           default:
-            return Text('Loading...');
+            return Text('Loading...'); 
             }
           },
         ),
