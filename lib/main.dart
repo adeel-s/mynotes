@@ -3,6 +3,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/firebase_options.dart';
 import 'package:mynotes/views/login_view.dart';
+import 'package:mynotes/views/register_view.dart';
+import 'package:mynotes/views/verify_email_view.dart';
+
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,7 +16,11 @@ void main() {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const HomePage(), //this is the first page displayed when the app is opened
+      home: const HomePage(),
+      routes: {
+        '/login': (context) => const LoginView(),
+        '/register/': (context) => const RegisterView()
+      }, //this is the first page displayed when the app is opened
     ),);
 }
 
@@ -23,12 +30,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const appBarColor = Colors.deepPurple;
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: appBarColor,
-        title: Text('Home')
-        ),
-        body: FutureBuilder(
+    return FutureBuilder(
           future: Firebase.initializeApp(
                     options: DefaultFirebaseOptions.currentPlatform,
                   ),
@@ -36,19 +38,22 @@ class HomePage extends StatelessWidget {
             switch (snapshot.connectionState) {
               case ConnectionState.done:
               final user = FirebaseAuth.instance.currentUser;
-              if (user?.emailVerified ?? false) {
-                print('user email is verified');
+              if (user != null) {
+                if (user.emailVerified) {
+                  print('Email is verified');
+                }
+                else {
+                  print('Sending user to verification page');
+                  return const VerifyEmailView();
+                }
               }
-              else
-                print('user email needs to be verified');
-              return const Text('Done');
+              else {
+                return const LoginView();
+              }
           default:
-            return Text('Loading...'); 
+            return const CircularProgressIndicator(); 
             }
           },
-        ),
-    );
+        );
   }
 }
-
-
