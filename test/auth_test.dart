@@ -10,7 +10,7 @@ void main() {
       expect(provider.isInitialized, false);
     });
     //could add a lot more of these type of tests vvv
-    test('Cannot lot out if not initialized', () {
+    test('Cannot log out if not initialized', () {
       expect(
         provider.logOut,
         throwsA(const TypeMatcher<NotInitializedException>()),
