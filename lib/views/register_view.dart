@@ -3,6 +3,7 @@ import 'package:mynotes/constants/routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/utilities/show_error_dialog.dart';
+import 'package:mynotes/views/verify_email_view.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -12,11 +13,10 @@ class RegisterView extends StatefulWidget {
 }
 
 class _RegisterViewState extends State<RegisterView> {
-  
   //use to access text from email/password text fields
   late final TextEditingController _email;
   late final TextEditingController _password;
-  
+
   //not sure what's happening here
   @override
   void initState() {
@@ -32,7 +32,6 @@ class _RegisterViewState extends State<RegisterView> {
     _password.dispose();
     super.dispose();
   }
- 
 
   @override
   Widget build(BuildContext context) {
@@ -43,64 +42,79 @@ class _RegisterViewState extends State<RegisterView> {
         backgroundColor: appBarColor,
       ),
       body: Column(
-              children: [
-                TextField(
-                  controller: _email,
-                  autocorrect: false,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    hintText: 'email',
-                  )
-                ),
-                TextField(
-                  controller: _password,
-                  obscureText: true,
-                  enableSuggestions: false,
-                  autocorrect: false,
-                  decoration: const InputDecoration(
-                    hintText: 'password',
-                  )
-                ), //Add confirm password field, add option to toggle view
-                TextButton(
-                  onPressed: () async {
-                    final email = _email.text;
-                    final password = _password.text;
-                    try {
-                    final userCredential = 
-                                await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
-                    log(userCredential.toString());
-                    } on FirebaseAuthException catch (e) {
-                      if (e.code == 'weak-password') {
-                        log(e.code);
-                        await showErrorDialog(context, 'Password requirements not met',);
-                      } else if (e.code == 'email-already-in-use'){
-                        log('email already in use');
-                        await showErrorDialog(context, 'Email address taken',);
-                      }
-                      else if (e.code == 'invalid-email'){
-                        log('Invalid email')  ;
-                        await showErrorDialog(context, 'Invalid email format',);
-                      }
-                    }
-                    catch (e) {
-                      log('Something bad happened');
-                      log(e.runtimeType.toString());
-                      log(e.toString());
-                      await showErrorDialog(context, 'Error: ${e.toString()}',);
-                    }
-                }, child: const Text('Register'),
-                ),
-                TextButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    loginRoute,
-                    (route) => false,
+        children: [
+          TextField(
+              controller: _email,
+              autocorrect: false,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(
+                hintText: 'email',
+              )),
+          TextField(
+              controller: _password,
+              obscureText: true,
+              enableSuggestions: false,
+              autocorrect: false,
+              decoration: const InputDecoration(
+                hintText: 'password',
+              )), //Add confirm password field, add option to toggle view
+          TextButton(
+            onPressed: () async {
+              final email = _email.text;
+              final password = _password.text;
+              try {
+                await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                  email: email,
+                  password: password,
+                );
+                final user = FirebaseAuth.instance.currentUser;
+                await user?.sendEmailVerification();
+                Navigator.of(context).pushNamed(
+                  verifyEmailRoute,
+                );
+              } on FirebaseAuthException catch (e) {
+                if (e.code == 'weak-password') {
+                  log(e.code);
+                  await showErrorDialog(
+                    context,
+                    'Password requirements not met',
                   );
-                }, 
-                child: const Text('Login here'),
-                ),
-              ],
-            ),
+                } else if (e.code == 'email-already-in-use') {
+                  log('email already in use');
+                  await showErrorDialog(
+                    context,
+                    'Email address taken',
+                  );
+                } else if (e.code == 'invalid-email') {
+                  log('Invalid email');
+                  await showErrorDialog(
+                    context,
+                    'Invalid email format',
+                  );
+                }
+              } catch (e) {
+                log('Something bad happened');
+                log(e.runtimeType.toString());
+                log(e.toString());
+                await showErrorDialog(
+                  context,
+                  'Error: ${e.toString()}',
+                );
+              }
+            },
+            child: const Text('Register'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                loginRoute,
+                (route) => false,
+              );
+            },
+            child: const Text('Login here'),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -13,11 +13,10 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  
   //use to access text from email/password text fields
   late final TextEditingController _email;
   late final TextEditingController _password;
-  
+
   //not sure what's happening here
   @override
   void initState() {
@@ -33,7 +32,6 @@ class _LoginViewState extends State<LoginView> {
     _password.dispose();
     super.dispose();
   }
- 
 
   @override
   Widget build(BuildContext context) {
@@ -44,73 +42,77 @@ class _LoginViewState extends State<LoginView> {
         backgroundColor: appBarColor,
       ),
       body: Column(
-              children: [
-                TextField(
-                  controller: _email,
-                  autocorrect: false,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    hintText: 'email',
-                  )
-                ),
-                TextField(
-                  controller: _password,
-                  obscureText: true,
-                  enableSuggestions: false,
-                  autocorrect: false,
-                  decoration: const InputDecoration(
-                    hintText: 'password',
-                  )
-                ), //Add confirm password field, add option to toggle view
-                TextButton(
-                  onPressed: () async {
-                    final email = _email.text;
-                    final password = _password.text;
-                    try {
-                    final userCredential = 
-                                await FirebaseAuth.instance.signInWithEmailAndPassword(
-                                  email: email, 
-                                  password: password);
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      notesRoute,
-                     (route) => false,
-                    );
-                    }
-                    on FirebaseAuthException catch (e) {
-                      
-                      if (e.code == 'invalid-credential') {
-                        log('User not found'); //add alert widget on view later
-                        await showErrorDialog(context, 'User not found',);
-                      }
-                      else if (e.code == 'invalid-email') {
-                        log(e.code);
-                        await showErrorDialog(context, 'Invalid email format',);
-                      }
-                      else {
-                        log(e.code);
-                        await showErrorDialog(context, 'Error: ${e.code}',);
-                      }
-                    }
-                    catch (e) {
-                      log('Something bad happened');
-                      log(e.runtimeType.toString());
-                      log(e.toString());
-                      await showErrorDialog(context, 'Error: ${e.toString()}',);
-                    }
-                }, child: const Text('Login'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      registerRoute,
-                      (route) => false,
-                    );
-                  }, 
-                  child: const Text('Register here'),
-                  )
-              ],
-            ),
+        children: [
+          TextField(
+              controller: _email,
+              autocorrect: false,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(
+                hintText: 'email',
+              )),
+          TextField(
+              controller: _password,
+              obscureText: true,
+              enableSuggestions: false,
+              autocorrect: false,
+              decoration: const InputDecoration(
+                hintText: 'password',
+              )), //Add confirm password field, add option to toggle view
+          TextButton(
+            onPressed: () async {
+              final email = _email.text;
+              final password = _password.text;
+              try {
+                final userCredential = await FirebaseAuth.instance
+                    .signInWithEmailAndPassword(
+                        email: email, password: password);
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  notesRoute,
+                  (route) => false,
+                );
+              } on FirebaseAuthException catch (e) {
+                if (e.code == 'invalid-credential') {
+                  log('User not found'); //add alert widget on view later
+                  await showErrorDialog(
+                    context,
+                    'User not found',
+                  );
+                } else if (e.code == 'invalid-email') {
+                  log(e.code);
+                  await showErrorDialog(
+                    context,
+                    'Invalid email format',
+                  );
+                } else {
+                  log(e.code);
+                  await showErrorDialog(
+                    context,
+                    'Error: ${e.code}',
+                  );
+                }
+              } catch (e) {
+                log('Something bad happened');
+                log(e.runtimeType.toString());
+                log(e.toString());
+                await showErrorDialog(
+                  context,
+                  'Error: ${e.toString()}',
+                );
+              }
+            },
+            child: const Text('Login'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                registerRoute,
+                (route) => false,
+              );
+            },
+            child: const Text('Register here'),
+          )
+        ],
+      ),
     );
   }
 }
-
