@@ -143,6 +143,7 @@ class NotesService {
       throw CouldNotDeleteNote();
     } else {
       _notes.removeWhere((note) => note.id == id);
+      //this is how the notes_view list widget finds out about the deleted note
       _notesStreamController.add(_notes);
     }
   }
