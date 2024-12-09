@@ -4,14 +4,17 @@ import 'package:flutter/foundation.dart';
 //This class is a wrapper for Firebase User.
 @immutable
 class AuthUser {
+  final String id;
   final bool isEmailVerified;
-  final String? email;
+  final String email;
   const AuthUser(
-      {required this.email,
+      {required this.id,
+      required this.email,
       required this.isEmailVerified}); //this is a constuctor definition
 
   factory AuthUser.fromFirebase(User user) => AuthUser(
-        email: user.email,
+        id: user.uid,
+        email: user.email!,
         isEmailVerified: user.emailVerified,
       );
 }
