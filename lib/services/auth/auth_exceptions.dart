@@ -1,6 +1,8 @@
 //Authentical exceptions
 class UserNotFoundAuthException implements Exception {}
 
+class InvalidCredentialException implements Exception {}
+
 class InvalidEmailFormatException implements Exception {}
 
 class WeakPasswordException implements Exception {}
