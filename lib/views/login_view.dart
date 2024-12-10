@@ -20,7 +20,6 @@ class _LoginViewState extends State<LoginView> {
   //use to access text from email/password text fields
   late final TextEditingController _email;
   late final TextEditingController _password;
-  CloseDialog? _closeDialogHandle;
 
   //not sure what's happening here
   @override
@@ -44,17 +43,6 @@ class _LoginViewState extends State<LoginView> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
         if (state is AuthStateLoggedOut) {
-          final closeDialog = _closeDialogHandle;
-
-          if (!state.isLoading && closeDialog != null) {
-            closeDialog();
-            _closeDialogHandle = null;
-          } else if (state.isLoading && closeDialog == null) {
-            _closeDialogHandle = showLogOutDialog(
-              context: context,
-              text: 'Loading...',
-            );
-          }
           if (state.exception is UserNotFoundAuthException ||
               state.exception is InvalidCredentialException) {
             await showErrorDialog(context, 'User not found');
