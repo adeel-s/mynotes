@@ -45,7 +45,7 @@ class _LoginViewState extends State<LoginView> {
         if (state is AuthStateLoggedOut) {
           if (state.exception is UserNotFoundAuthException ||
               state.exception is InvalidCredentialException) {
-            await showErrorDialog(context, 'User not found');
+            await showErrorDialog(context, 'No user with those credentials');
           } else if (state.exception is InvalidEmailFormatException) {
             await showErrorDialog(context, 'Invalid email format');
           } else if (state.exception is GenericAuthException) {
@@ -58,45 +58,57 @@ class _LoginViewState extends State<LoginView> {
           title: const Text('Login'),
           backgroundColor: appBarColor,
         ),
-        body: Column(
-          children: [
-            TextField(
-                controller: _email,
-                autocorrect: false,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  hintText: 'email',
-                )),
-            TextField(
-                controller: _password,
-                obscureText: true,
-                enableSuggestions: false,
-                autocorrect: false,
-                decoration: const InputDecoration(
-                  hintText: 'password',
-                )), //Add confirm password field, add option to toggle view
-            TextButton(
-              onPressed: () async {
-                final email = _email.text;
-                final password = _password.text;
-                context.read<AuthBloc>().add(
-                      AuthEventLogIn(
-                        email,
-                        password,
-                      ),
-                    );
-              },
-              child: const Text('Login'),
-            ),
-            TextButton(
-              onPressed: () {
-                context.read<AuthBloc>().add(
-                      const AuthEventShouldRegister(),
-                    );
-              },
-              child: const Text('Register here'),
-            ),
-          ],
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Text('Please log in to your account'),
+              TextField(
+                  controller: _email,
+                  autocorrect: false,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(
+                    hintText: 'email',
+                  )),
+              TextField(
+                  controller: _password,
+                  obscureText: true,
+                  enableSuggestions: false,
+                  autocorrect: false,
+                  decoration: const InputDecoration(
+                    hintText: 'password',
+                  )), //Add confirm password field, add option to toggle view
+              TextButton(
+                onPressed: () async {
+                  final email = _email.text;
+                  final password = _password.text;
+                  context.read<AuthBloc>().add(
+                        AuthEventLogIn(
+                          email,
+                          password,
+                        ),
+                      );
+                },
+                child: const Text('Login'),
+              ),
+              TextButton(
+                onPressed: () {
+                  context.read<AuthBloc>().add(
+                        const AuthEventForgotPassword(),
+                      );
+                },
+                child: const Text('Forgot Password'),
+              ),
+              TextButton(
+                onPressed: () {
+                  context.read<AuthBloc>().add(
+                        const AuthEventShouldRegister(),
+                      );
+                },
+                child: const Text('Register here'),
+              ),
+            ],
+          ),
         ),
       ),
     );

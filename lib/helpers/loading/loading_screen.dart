@@ -44,7 +44,7 @@ class LoadingScreen {
           child: Center(
             child: Container(
               constraints: BoxConstraints(
-                //minWidth: size.height * 0.5,
+                //minWidth: size.height * 0.5, //this is causing an exception
                 maxWidth: size.width * 0.8,
                 maxHeight: size.height * 0.8,
               ),
